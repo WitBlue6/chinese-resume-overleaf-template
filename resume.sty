@@ -1,0 +1,146 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{resume}[2026/10/02 Chinese resume template]
+\RequirePackage{iftex}
+\ifXeTeX\else
+  \PackageError{resume}{Please select XeLaTeX}{Overleaf Settings > Compiler > XeLaTeX}
+\fi
+\RequirePackage[a4paper,left=15mm,right=8mm,top=48.3mm,bottom=20mm]{geometry}
+\RequirePackage{fontspec}
+\RequirePackage{xeCJK}
+\xeCJKsetup{CJKspace=true,CJKecglue=\hskip .125em plus .05em minus .05em}
+\RequirePackage{xcolor}
+\RequirePackage{graphicx}
+\RequirePackage{tikz}
+\RequirePackage{enumitem}
+\RequirePackage{needspace}
+\RequirePackage[hidelinks,unicode]{hyperref}
+% Bundled open-source CJK font; no proprietary system fonts required.
+\setmainfont{TeX Gyre Heros}
+\setCJKmainfont{SourceHanSansCN-Medium.otf}[Path=fonts/,BoldFont=SourceHanSansCN-Medium.otf]
+\newCJKfontfamily\ResumeTitleFont{SourceHanSansCN-Medium.otf}[Path=fonts/]
+\definecolor{ResumeBlue}{HTML}{2C3F71}
+\definecolor{ResumeText}{HTML}{404040}
+\definecolor{ContactText}{HTML}{595959}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\setlength{\emergencystretch}{1em}
+\AtBeginDocument{\color{ResumeText}\fontsize{10bp}{18bp}\selectfont}
+\newcommand{\ResumeBlueBold}{\color{ResumeBlue}\bfseries\fontsize{11bp}{18bp}\selectfont}
+% Draw the original arrow instead of relying on Wingdings.
+\newcommand{\ResumeArrow}{\tikz[baseline=-.5bp,x=1bp,y=1bp]{%
+  \draw[ResumeText,line width=.4bp] (0,0)--(5,3)--(0,6)--(1.8,3)--cycle;
+  \draw[ResumeText,line width=.35bp] (1.8,3)--(5,3);}}
+\newlist{resumeitems}{itemize}{1}
+\setlist[resumeitems]{label=\ResumeArrow,leftmargin=8.2mm,labelwidth=2.3mm,labelsep=5.9mm,
+  topsep=0pt,partopsep=0pt,itemsep=0pt,parsep=0pt}
+\newcommand{\Point}[2]{\item \textbf{#1}#2}
+% Header icons, independent of operating-system symbol fonts.
+\newcommand{\ContactIcon}[1]{%
+  \begin{tikzpicture}[x=1mm,y=1mm,baseline=-1mm]
+  \fill[ResumeBlue] (0,0) circle(2.5);
+  \begin{scope}[white,line width=.35mm]
+  \ifcase#1\relax
+    \draw (0,0) circle(1.5);\draw (0,1)--(0,0)--(.8,-.6);
+  \or
+    \draw (0,1.5) .. controls (-2,1.5) and (-1,-.6) .. (0,-1.6)
+      .. controls (1,-.6) and (2,1.5) .. (0,1.5);\fill (0,.6) circle(.5);
+  \or
+    \draw[rounded corners=.2mm] (-1.4,-1) rectangle(1.4,1);
+    \draw (-.6,1)--(-.6,1.5)--(.6,1.5)--(.6,1);\draw (-1.4,.35)--(1.4,.35);
+  \or
+    \fill (0,.85) circle(.85);\fill (-1.5,-1.2) .. controls (-1.5,.3) and (1.5,.3) .. (1.5,-1.2)--cycle;
+  \or
+    \draw[rounded corners=.2mm] (-.9,-1.5) rectangle(.9,1.5);\fill (0,-1) circle(.15);
+  \or
+    \draw (-1.6,-1) rectangle(1.6,1);\draw (-1.6,1)--(0,-.1)--(1.6,1);
+  \fi
+  \end{scope}\end{tikzpicture}}
+\newsavebox{\ResumePhotoBox}
+\newlength{\ResumePhotoTrim}
+% Arguments: name, birth, hometown, political status, gender, phone, email.
+\newcommand{\ResumeHeader}[7]{%
+\hypersetup{pdftitle={中文简历模板示例},pdfauthor={中文简历模板}}
+% Public example uses a drawn placeholder. Replace it with your own image locally if desired.
+\def\ResumePhotoGraphic{\begin{tikzpicture}[x=1mm,y=1mm]
+  \path[fill=gray!8,draw=gray!35] (0,0) rectangle (28.2,36.34);
+  \node[text=gray!60,font=\fontsize{11bp}{13bp}\selectfont] at (14.1,18.17) {照片};
+\end{tikzpicture}}
+\AddToHookNext{shipout/foreground}{%
+\begin{tikzpicture}[remember picture,overlay,x=1mm,y=-1mm]
+\begin{scope}[shift={(current page.north west)}]
+  \fill[ResumeBlue] (193.5,0)--(199.5,0)--(210,10.5)--(210,16.5)--cycle;
+  \fill[ResumeBlue] (203.5,0)--(210,0)--(210,6.5)--cycle;
+  \node[anchor=north west,inner sep=0,text=ResumeBlue,font=\bfseries\fontsize{20bp}{24bp}\selectfont] at (17.7,17.1) {#1};
+  \fill[ResumeBlue] (17.7,26.5) rectangle(92,27.5);
+  \node[anchor=north west,inner sep=0] at (163.5,14.13) {\ResumePhotoGraphic};
+  \foreach \i/\yy in {0/31.7,1/38.05,2/44.4} {
+    \node[inner sep=0] at (20.6,\yy) {\ContactIcon{\i}};
+  }
+  \foreach \i/\yy in {3/32.25,4/38.6,5/44.95} {
+    \node[inner sep=0] at (78.4,\yy) {\ContactIcon{\i}};
+  }
+  \node[anchor=west,inner sep=0,text=ContactText,font=\fontsize{11bp}{13bp}\selectfont] at (25.9,31.9) {出生年月：#2};
+  \node[anchor=west,inner sep=0,text=ContactText,font=\fontsize{11bp}{13bp}\selectfont] at (25.9,38.25) {籍\hspace{2em}贯：#3};
+  \node[anchor=west,inner sep=0,text=ContactText,font=\fontsize{11bp}{13bp}\selectfont] at (25.9,44.6) {政治面貌：#4};
+  \node[anchor=west,inner sep=0,text=ContactText,font=\fontsize{11bp}{13bp}\selectfont] at (83,32.45) {性\hspace{2em}别：#5};
+  \node[anchor=west,inner sep=0,text=ContactText,font=\fontsize{11bp}{13bp}\selectfont] at (83,38.8) {电\hspace{2em}话：#6};
+  \node[anchor=west,inner sep=0,text=ContactText,font=\fontsize{11bp}{13bp}\selectfont] at (83,45.15) {邮\hspace{2em}箱：#7};
+\end{scope}\end{tikzpicture}}}
+% Section ribbon and icons are drawn as vectors.
+\newcommand{\SectionIcon}[1]{%
+\ifnum#1=0
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle(7,6);
+    \fill[white] (.3,3.8)--(3.5,5.3)--(6.7,3.8)--(3.5,2.3)--cycle;
+    \draw[white,line width=.45mm] (1.5,3)--(1.5,1.9)--(3.5,1)--(5.5,1.9)--(5.5,3);
+    \draw[white,line width=.3mm] (6.5,3.8)--(6.5,1.6);
+  \end{tikzpicture}%
+\else\ifnum#1=2
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle(7,6);
+    \fill[white] (1.3,.6) rectangle(5.7,4.6);
+    \fill[white] (.9,4.9) rectangle(6.1,5.6);
+    \draw[ResumeBlue,line width=.4mm] (2.7,3.5)--(4.3,3.5);
+  \end{tikzpicture}%
+\else
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle (7,6);
+    \ifnum#1=1
+      \draw[white,line width=.5mm,rounded corners=.3mm] (.8,1) rectangle (6.2,4.5);
+      \draw[white,line width=.5mm] (2.3,4.5)--(2.3,5.4)--(4.7,5.4)--(4.7,4.5);
+      \draw[white,line width=.35mm] (.8,2.7)--(6.2,2.7);
+    \fi
+    \ifnum#1=3
+      \draw[white,line width=.45mm] (1.6,5.5)--(1.6,2.3) arc (180:360:1.9)--(5.4,5.5);
+      \draw[white,line width=.45mm] (1,5.2)--(1,3.9) arc (180:270:1.2);
+      \draw[white,line width=.45mm] (6,5.2)--(6,3.9) arc (0:-90:1.2);
+      \draw[white,line width=.45mm] (3.5,2.2)--(3.5,.8)--(2.2,.8)--(4.8,.8);
+    \fi
+    \ifnum#1=4
+      \draw[white,line width=.45mm,rounded corners=.3mm] (.8,1) rectangle (6.2,5);
+      \draw[white,line width=.35mm] (1.7,3.7)--(2.5,3)--(1.7,2.3);
+      \draw[white,line width=.35mm] (3,2.2)--(4.8,2.2);
+    \fi
+  \end{tikzpicture}%
+\fi\fi}
+\newcommand{\ResumeSection}[2]{%
+  \par\addvspace{3bp}\Needspace{42bp}%
+  \noindent\begin{tikzpicture}[x=1mm,y=1mm,baseline=0mm]
+    \path[use as bounding box] (0,0) rectangle(179,6.5);
+    \fill[ResumeBlue] (0,0) rectangle(35,6.5);
+    \fill[ResumeBlue] (0,0) rectangle(179,.5);
+    \node[inner sep=0] at (5.2,3.4) {\SectionIcon{#1}};
+    \node[anchor=west,inner sep=0,text=white,font=\normalfont\ResumeTitleFont\fontsize{14bp}{16bp}\selectfont] at (10,3.35) {#2};
+  \end{tikzpicture}\par\nobreak\vspace{-1.5bp}}
+\newcommand{\Education}[3]{%
+  \noindent\hspace{.7mm}{\ResumeBlueBold\makebox[36mm][l]{#1}\makebox[115.3mm][c]{#2}\makebox[35mm][r]{#3}}\par}
+\newcommand{\Entry}[2]{%
+  \par\Needspace{36bp}\noindent\hspace{.7mm}{\ResumeBlueBold #1\hfill #2\hspace{4mm}}\par\nobreak}
+\newcommand{\Description}[1]{\noindent\hspace{.7mm}#1\par\nobreak}
+\newcommand{\AwardRow}[2]{%
+  \noindent\makebox[7mm][l]{\ResumeArrow}\makebox[106mm][l]{#1}#2\par}
+\newcommand{\SkillHead}[2]{%
+  \noindent\makebox[108mm][l]{\hspace{2.7mm}{\ResumeBlueBold #1}}{\ResumeBlueBold #2}\par}
+\newcommand{\SkillRow}[2]{%
+  \noindent\hspace{.7mm}\makebox[104.3mm][l]{-\enspace #1}-\enspace #2\par}
